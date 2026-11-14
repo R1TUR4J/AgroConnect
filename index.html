@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroConnect Enterprise – Producer & Investor B2B/B2C Marketplace</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ==================== TOP UTILITY BAR ==================== -->
+  <div class="utility-bar">
+    <div class="container utility-inner">
+      <div class="utility-left">
+        <span class="status-dot"></span>
+        <span>AgroConnect Enterprise Portal • Direct Producer-to-Investor Network (Zero Middlemen)</span>
+      </div>
+      <div class="utility-right">
+        <button class="util-link" onclick="navigateTo('auth-seller')">Seller Portal</button>
+        <span>|</span>
+        <button class="util-link" onclick="navigateTo('auth-buyer')">Investor Portal</button>
+        <span>|</span>
+        <button class="util-link" onclick="navigateTo('admin-dashboard')">Admin Console</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN ENTERPRISE NAVBAR ==================== -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <!-- Brand Logo -->
+      <div class="brand" onclick="navigateTo('home')">
+        <div class="brand-mark">AC</div>
+        <div class="brand-text">
+          <span class="brand-name">AgroConnect</span>
+          <span class="brand-tag">PRODUCER & INVESTOR EXCHANGE</span>
+        </div>
+      </div>
+
+      <!-- Global Search Bar -->
+      <div class="global-search">
+        <input
+          type="text"
+          id="globalSearchInput"
+          placeholder="Search products, electronics, bamboo crafts, organic crops, sellers..."
+          onkeydown="if(event.key==='Enter') triggerGlobalSearch()"
+        />
+        <button class="search-btn" onclick="triggerGlobalSearch()">Search</button>
+      </div>
+
+      <!-- Right Controls: Notifications, Role Switcher, Active User -->
+      <div class="nav-controls">
+        <!-- Notification Bell -->
+        <div class="notif-wrapper">
+          <button class="icon-btn" onclick="toggleNotificationDrawer()" title="Notifications">
+            🔔 <span id="notifBadge" class="counter-badge">0</span>
+          </button>
+          <div id="notifDrawer" class="notif-drawer hidden">
+            <div class="notif-header">
+              <strong>Notifications</strong>
+              <button class="btn-text" onclick="markAllNotificationsRead()">Mark all read</button>
+            </div>
+            <div id="notifList" class="notif-list"></div>
+          </div>
+        </div>
+
+        <!-- Role Simulator Switch -->
+        <div class="role-selector">
+          <span class="role-selector-label">Workspace Role</span>
+          <select id="globalRoleSelect" onchange="handleRoleChange(this.value)">
+            <option value="seller">Seller / Producer</option>
+            <option value="buyer">Investor / Buyer</option>
+            <option value="admin">Platform Admin</option>
+          </select>
+        </div>
+
+        <!-- Active User Pill -->
+        <button class="user-pill" onclick="navigateTo(state.currentUser.role === 'seller' ? 'seller-profile' : 'auth-buyer')">
+          <span class="user-avatar" id="navUserAvatar">S</span>
+          <div class="user-meta">
+            <span id="navUserName" class="user-name">Loading...</span>
+            <span id="navUserRole" class="user-sub">Seller</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Secondary Navigation Bar (All 16 Pages Accessible) -->
+    <div class="subnav">
+      <div class="container subnav-links">
+        <button class="subnav-btn active" data-view="home" onclick="navigateTo('home')">Home</button>
+        <button class="subnav-btn" data-view="marketplace" onclick="navigateTo('marketplace')">Explore Marketplace</button>
+        <button class="subnav-btn" data-view="categories" onclick="navigateTo('categories')">Category Pages</button>
+        <button class="subnav-btn seller-nav" data-view="seller-dashboard" onclick="navigateTo('seller-dashboard')">Seller Dashboard</button>
+        <button class="subnav-btn buyer-nav" data-view="buyer-dashboard" onclick="navigateTo('buyer-dashboard')">Investor Dashboard</button>
+        <button class="subnav-btn seller-nav" data-view="add-product" onclick="navigateTo('add-product')">+ Add Product</button>
+        <button class="subnav-btn seller-nav" data-view="my-products" onclick="navigateTo('my-products')">My Products</button>
+        <button class="subnav-btn" data-view="purchase-requests" onclick="navigateTo('purchase-requests')">
+          Purchase Requests <span id="subnavReqBadge" class="inline-badge">0</span>
+        </button>
+        <button class="subnav-btn" data-view="negotiations" onclick="navigateTo('negotiations')">
+          Negotiation Centre <span id="subnavNegBadge" class="inline-badge">0</span>
+        </button>
+        <button class="subnav-btn" data-view="messages" onclick="navigateTo('messages')">
+          Messages <span id="subnavMsgBadge" class="inline-badge">0</span>
+        </button>
+        <button class="subnav-btn" data-view="orders" onclick="navigateTo('orders')">Orders & Transactions</button>
+        <button class="subnav-btn" data-view="seller-profile" onclick="navigateTo('seller-profile')">Seller Profile</button>
+        <button class="subnav-btn admin-nav" data-view="admin-dashboard" onclick="navigateTo('admin-dashboard')">Admin</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN WORKSPACE CONTAINER ==================== -->
+  <main class="container workspace">
+
+    <!-- ==================== PAGE 1: HOME PAGE ==================== -->
+    <section id="view-home" class="page-view active">
+      <!-- Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-left">
+          <div class="hero-badge">B2B & Direct-to-Buyer Marketplace • Northeast India & Pan-India</div>
+          <h1>Connect Directly with Local Producers, Artisans, Tech Makers & Bulk Investors</h1>
+          <p>
+            A transparent multi-category digital exchange where farmers, handloom weavers, bamboo craftsmen, food processors, and electronics entrepreneurs list real inventory and negotiate fair deals directly with buyers.
+          </p>
+          <div class="hero-search-bar">
+            <input type="text" id="heroSearchField" placeholder="Try 'Joha Rice', 'Solar Dryer', 'Bamboo Chair', 'Mekhela Chador'..." />
+            <select id="heroCategorySelect"></select>
+            <button class="btn btn-primary" onclick="runHeroSearch()">Explore Inventory</button>
+          </div>
+          <div class="hero-cta-group">
+            <button class="btn btn-light" onclick="navigateTo('auth-seller')">Join as a Seller / Producer</button>
+            <button class="btn btn-outline-light" onclick="navigateTo('auth-buyer')">Join as an Investor / Buyer</button>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="metric-glass">
+            <span class="metric-label">Pricing Governance</span>
+            <h3>100% Seller-Controlled</h3>
+            <p>Buyers submit proposals; only verified sellers can accept, reject, or counteroffer.</p>
+          </div>
+          <div class="metric-row-glass">
+            <div class="metric-mini">
+              <h4 id="heroStatProducts">8+</h4>
+              <span>Active Listings</span>
+            </div>
+            <div class="metric-mini">
+              <h4>8</h4>
+              <span>Core Sectors</span>
+            </div>
+            <div class="metric-mini">
+              <h4>0%</h4>
+              <span>Middlemen Cut</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Explore Categories Section -->
+      <div class="home-section">
+        <div class="section-head">
+          <div>
+            <h2>Explore Marketplace Categories</h2>
+            <p class="text-muted">Discover verified local inventory across agriculture, crafts, textiles, manufacturing, and electronics.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="navigateTo('categories')">Open Category Directory →</button>
+        </div>
+        <div id="homeCategoryGrid" class="category-grid"></div>
+      </div>
+
+      <!-- Recently Added Products -->
+      <div class="home-section">
+        <div class="section-head">
+          <div>
+            <h2>Recently Added Products</h2>
+            <p class="text-muted">Freshly uploaded stock with real photographs and direct producer pricing.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="navigateTo('marketplace')">View All Listings →</button>
+        </div>
+        <div id="homeRecentGrid" class="product-grid"></div>
+      </div>
+
+      <!-- Popular Products -->
+      <div class="home-section">
+        <div class="section-head">
+          <div>
+            <h2>Popular & High-Demand Bulk Products</h2>
+            <p class="text-muted">Top-requested items by regional wholesale buyers and retail investors.</p>
+          </div>
+        </div>
+        <div id="homePopularGrid" class="product-grid"></div>
+      </div>
+
+      <!-- Local Producers and Artisans Section -->
+      <div class="home-section">
+        <div class="section-head">
+          <div>
+            <h2>Featured Local Producers, Artisans & Entrepreneurs</h2>
+            <p class="text-muted">Click any producer card to inspect their full profile, verified location, and active catalogue.</p>
+          </div>
+        </div>
+        <div id="homeProducersGrid" class="producer-grid"></div>
+      </div>
+
+      <!-- How It Works Section -->
+      <div class="home-section how-it-works-box">
+        <div class="section-head-center">
+          <h2>How AgroConnect Enterprise Works</h2>
+          <p class="text-muted">End-to-end transparent deal flow designed to protect producer margins and buyer quality.</p>
+        </div>
+        <div class="workflow-grid">
+          <div class="workflow-step">
+            <div class="step-badge">01</div>
+            <h4>Producer Lists Real Stock</h4>
+            <p>Sellers capture or upload real product photos, specify quality grades, available units, and expected unit price.</p>
+          </div>
+          <div class="workflow-step">
+            <div class="step-badge">02</div>
+            <h4>Investor Sends Purchase Request</h4>
+            <p>Buyers filter by category or district and submit a formal Purchase Request with required quantity and proposed price.</p>
+          </div>
+          <div class="workflow-step">
+            <div class="step-badge">03</div>
+            <h4>Seller-Controlled Negotiation</h4>
+            <p>Sellers review proposals in the Negotiation Centre and can Accept, Reject, or send a Counteroffer in real time.</p>
+          </div>
+          <div class="workflow-step">
+            <div class="step-badge">04</div>
+            <h4>Mutual Confirmation & Dispatch</h4>
+            <p>Once both parties agree, inventory is automatically deducted to prevent overselling and an official order receipt is generated.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 2: SELLER REGISTRATION & LOGIN ==================== -->
+    <section id="view-auth-seller" class="page-view">
+      <div class="auth-layout">
+        <div class="auth-info-panel">
+          <span class="badge-pill">Seller & Producer Onboarding</span>
+          <h2>Empower Your Production Unit or Artisan Workshop</h2>
+          <p>Register as a Farmer, Baker, Bamboo Artisan, Handloom Weaver, Woodworker, Electronics Maker, or Small Manufacturer.</p>
+          <ul class="feature-checklist">
+            <li>✓ Upload multiple real product photos or capture via mobile camera</li>
+            <li>✓ Full control over your expected selling price and stock units</li>
+            <li>✓ Direct 1-to-1 price negotiation and private chat with investors</li>
+            <li>✓ Create custom product categories on demand</li>
+          </ul>
+        </div>
+        <div class="auth-form-card">
+          <h3>Seller Registration & Profile Switch</h3>
+          <p class="text-muted">Sign in or register your producer identity below.</p>
+          <form onsubmit="handleSellerAuth(event)">
+            <div class="form-group">
+              <label>Producer / Enterprise Name *</label>
+              <input type="text" id="sellerAuthName" required placeholder="e.g., Kaziranga Cane & Bamboo Craft" />
+            </div>
+            <div class="form-group">
+              <label>Producer Category *</label>
+              <select id="sellerAuthCat" required></select>
+            </div>
+            <div class="form-group">
+              <label>Town / District & State *</label>
+              <input type="text" id="sellerAuthLoc" required placeholder="e.g., Golaghat, Assam" />
+            </div>
+            <div class="form-group">
+              <label>Contact Phone / UPI / Business ID *</label>
+              <input type="text" id="sellerAuthPhone" required placeholder="e.g., +91 98640-XXXXX" />
+            </div>
+            <div class="form-group">
+              <label>About Your Production Unit *</label>
+              <textarea id="sellerAuthBio" rows="3" required placeholder="Describe your farm, workshop, manufacturing capacity, and quality standards..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Activate Seller Workspace</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 3: INVESTOR / BUYER REGISTRATION & LOGIN ==================== -->
+    <section id="view-auth-buyer" class="page-view">
+      <div class="auth-layout">
+        <div class="auth-info-panel buyer-theme">
+          <span class="badge-pill">Investor & Institutional Buyer Portal</span>
+          <h2>Source Directly from Verified Local Producers</h2>
+          <p>Built for wholesale buyers, retail chains, exporters, resort owners, and commodity investors.</p>
+          <ul class="feature-checklist">
+            <li>✓ Inspect real product photographs, material quality, and stock levels</li>
+            <li>✓ Submit custom quantity purchase requests with proposed unit pricing</li>
+            <li>✓ Negotiate directly with sellers without broker markups</li>
+            <li>✓ Track confirmed orders and download commercial deal receipts</li>
+          </ul>
+        </div>
+        <div class="auth-form-card">
+          <h3>Investor / Buyer Registration & Login</h3>
+          <p class="text-muted">Configure your buyer profile to submit purchase requests and negotiate deals.</p>
+          <form onsubmit="handleBuyerAuth(event)">
+            <div class="form-group">
+              <label>Investor / Company Name *</label>
+              <input type="text" id="buyerAuthName" required placeholder="e.g., Northeast Eco-Resorts & Retail Pvt Ltd" />
+            </div>
+            <div class="form-group">
+              <label>Buyer Type *</label>
+              <select id="buyerAuthType" required>
+                <option value="Wholesale Investor & Distributor">Wholesale Investor & Distributor</option>
+                <option value="Retail Chain / Supermarket Buyer">Retail Chain / Supermarket Buyer</option>
+                <option value="Hospitality / Eco-Resort Procurement">Hospitality / Eco-Resort Procurement</option>
+                <option value="Export & Institutional Buyer">Export & Institutional Buyer</option>
+                <option value="Direct Individual Buyer">Direct Individual Buyer</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Operating Location *</label>
+              <input type="text" id="buyerAuthLoc" required placeholder="e.g., Guwahati, Assam" />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Activate Investor Workspace</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 4: SELLER DASHBOARD ==================== -->
+    <section id="view-seller-dashboard" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">PRODUCER CONTROL CENTRE</span>
+          <h2 id="sellerDashHeading">Seller Dashboard</h2>
+          <p id="sellerDashSub" class="text-muted"></p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="navigateTo('my-products')">Manage My Products</button>
+          <button class="btn btn-primary" onclick="navigateTo('add-product')">+ Upload New Product</button>
+        </div>
+      </div>
+
+      <div id="sellerKpiGrid" class="kpi-grid"></div>
+
+      <div class="split-2col">
+        <div class="panel-card">
+          <div class="panel-head">
+            <h3>Incoming Purchase Requests & Negotiations</h3>
+            <button class="btn-text" onclick="navigateTo('negotiations')">Open Negotiation Centre →</button>
+          </div>
+          <div id="sellerDashNegList"></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <h3>Interested Buyers & Recent Sales</h3>
+            <button class="btn-text" onclick="navigateTo('orders')">View All Orders →</button>
+          </div>
+          <div id="sellerDashOrdersList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 5: INVESTOR DASHBOARD ==================== -->
+    <section id="view-buyer-dashboard" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">INVESTOR & PROCUREMENT WORKSPACE</span>
+          <h2 id="buyerDashHeading">Investor / Buyer Dashboard</h2>
+          <p id="buyerDashSub" class="text-muted"></p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="navigateTo('negotiations')">View Counteroffers</button>
+          <button class="btn btn-primary" onclick="navigateTo('marketplace')">Explore Marketplace</button>
+        </div>
+      </div>
+
+      <div id="buyerKpiGrid" class="kpi-grid"></div>
+
+      <div class="split-2col">
+        <div class="panel-card">
+          <div class="panel-head">
+            <h3>My Active Proposals & Seller Counteroffers</h3>
+            <button class="btn-text" onclick="navigateTo('negotiations')">Manage Proposals →</button>
+          </div>
+          <div id="buyerDashNegList"></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-head">
+            <h3>Confirmed Procurement Orders</h3>
+            <button class="btn-text" onclick="navigateTo('orders')">Order History →</button>
+          </div>
+          <div id="buyerDashOrdersList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 6: EXPLORE MARKETPLACE ==================== -->
+    <section id="view-marketplace" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">MULTI-CATEGORY EXCHANGE</span>
+          <h2>Explore Marketplace Inventory</h2>
+          <p class="text-muted">Filter verified local products by category, location, price range, and stock availability.</p>
+        </div>
+      </div>
+
+      <div class="filter-toolbar">
+        <div class="filter-item filter-grow">
+          <label>Keyword Search</label>
+          <input type="text" id="fltSearch" placeholder="Product title, quality spec, seller name..." oninput="renderMarketplace()" />
+        </div>
+        <div class="filter-item">
+          <label>Category</label>
+          <select id="fltCategory" onchange="renderMarketplace()"></select>
+        </div>
+        <div class="filter-item">
+          <label>Location / District</label>
+          <select id="fltLocation" onchange="renderMarketplace()">
+            <option value="ALL">All Locations</option>
+            <option value="Golaghat">Golaghat</option>
+            <option value="Dibrugarh">Dibrugarh</option>
+            <option value="Jorhat">Jorhat</option>
+            <option value="Guwahati">Guwahati</option>
+            <option value="Majuli">Majuli</option>
+            <option value="Duliajan">Duliajan</option>
+            <option value="Sivasagar">Sivasagar</option>
+            <option value="Tezpur">Tezpur</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Max Unit Price (₹)</label>
+          <input type="number" id="fltMaxPrice" placeholder="No limit" min="1" oninput="renderMarketplace()" />
+        </div>
+        <div class="filter-item">
+          <label>Sort By</label>
+          <select id="fltSort" onchange="renderMarketplace()">
+            <option value="NEWEST">Recently Added</option>
+            <option value="PRICE_ASC">Price: Low to High</option>
+            <option value="PRICE_DESC">Price: High to Low</option>
+            <option value="STOCK_DESC">Highest Available Quantity</option>
+          </select>
+        </div>
+        <div class="filter-item filter-btn-wrap">
+          <button class="btn btn-outline" onclick="resetMarketplaceFilters()">Reset</button>
+        </div>
+      </div>
+
+      <div id="marketplaceResultCount" class="result-bar"></div>
+      <div id="marketplaceGrid" class="product-grid"></div>
+    </section>
+
+    <!-- ==================== PAGE 7: CATEGORY PAGES ==================== -->
+    <section id="view-categories" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">SECTOR DIRECTORY</span>
+          <h2>Product Category Pages</h2>
+          <p class="text-muted">Select any category tab below to inspect dedicated sector listings, or add a custom category when listing a product.</p>
+        </div>
+      </div>
+
+      <div id="categoryTabsBar" class="category-tabs"></div>
+      <div id="categoryPageHeader" class="category-banner"></div>
+      <div id="categoryPageProducts" class="product-grid"></div>
+    </section>
+
+    <!-- ==================== PAGE 8: PRODUCT DETAILS PAGE ==================== -->
+    <section id="view-product-details" class="page-view">
+      <div class="breadcrumb-bar">
+        <button class="btn-text" onclick="navigateTo('marketplace')">← Back to Explore Marketplace</button>
+      </div>
+      <div id="productDetailsContainer"></div>
+    </section>
+
+    <!-- ==================== PAGE 9: ADD PRODUCT LISTING ==================== -->
+    <section id="view-add-product" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">SELLER INVENTORY STUDIO</span>
+          <h2 id="productFormHeading">Add New Product Listing</h2>
+          <p class="text-muted">Upload multiple real photographs or capture from your camera, define specifications, and set your expected selling price.</p>
+        </div>
+      </div>
+
+      <div class="form-panel">
+        <form id="productListingForm" onsubmit="saveProductListing(event)">
+          <input type="hidden" id="editProductId" value="" />
+          <div class="form-grid-3">
+            <div class="form-group span-2">
+              <label>Product Name / Title *</label>
+              <input type="text" id="inpProdName" required placeholder="e.g., Treated Assam Bamboo Lounge Chair / IoT Soil Moisture Sensor Node" />
+            </div>
+
+            <div class="form-group">
+              <label>Product Category *</label>
+              <select id="inpProdCategory" onchange="handleCategoryDropdownChange(this.value)" required></select>
+            </div>
+
+            <div id="customCatBox" class="form-group span-3 hidden">
+              <label>New Custom Category Name *</label>
+              <input type="text" id="inpCustomCategory" placeholder="Enter your new category name (e.g., Apiculture & Honey Products)" />
+            </div>
+
+            <div class="form-group span-2">
+              <label>Product Quality, Material & Technical Specifications *</label>
+              <input type="text" id="inpProdSpecs" required placeholder="e.g., Grade-A Borak Bamboo / ESP32 Solar Weatherproof Enclosure / 100% Organic" />
+            </div>
+
+            <div class="form-group">
+              <label>Product Location (Town, District) *</label>
+              <input type="text" id="inpProdLocation" required placeholder="e.g., Golaghat, Assam" />
+            </div>
+
+            <div class="form-group">
+              <label>Available Quantity *</label>
+              <input type="number" id="inpProdQty" min="1" required placeholder="e.g., 50" />
+            </div>
+
+            <div class="form-group">
+              <label>Measurement Unit *</label>
+              <select id="inpProdUnit" required>
+                <option value="pieces">Pieces</option>
+                <option value="kg">Kilograms (kg)</option>
+                <option value="quintal">Quintals</option>
+                <option value="units">Units</option>
+                <option value="sets">Sets</option>
+                <option value="packets">Packets</option>
+                <option value="litres">Litres</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Expected Selling Price (₹ per unit) *</label>
+              <input type="number" id="inpProdPrice" min="1" required placeholder="e.g., 1500" />
+            </div>
+
+            <div class="form-group span-3">
+              <label>Delivery or Pickup Availability *</label>
+              <select id="inpProdDelivery" required>
+                <option value="Both Direct Pickup & Transport Delivery Available">Both Direct Pickup & Transport Delivery Available</option>
+                <option value="Direct Farm / Workshop Pickup Only">Direct Farm / Workshop Pickup Only</option>
+                <option value="Pan-Assam & Northeast Logistics Delivery">Pan-Assam & Northeast Logistics Delivery</option>
+                <option value="All-India Courier & Freight Available">All-India Courier & Freight Available</option>
+              </select>
+            </div>
+
+            <div class="form-group span-3">
+              <label>Detailed Product Description *</label>
+              <textarea id="inpProdDesc" rows="4" required placeholder="Provide complete details about production method, durability, packaging, minimum order flexibility, and lead time..."></textarea>
+            </div>
+          </div>
+
+          <!-- Multi-Image Upload & Live Camera Studio -->
+          <div class="upload-studio">
+            <div class="upload-studio-head">
+              <div>
+                <h4>Product Photographs (Multi-Image & Mobile/Webcam Capture) *</h4>
+                <p class="text-muted">Upload real product images from your device or take a live photograph right now. You can preview, replace, or delete images before publishing.</p>
+              </div>
+              <div class="upload-actions">
+                <label class="btn btn-outline btn-sm file-label">
+                  📁 Upload Images
+                  <input type="file" id="inpProdFiles" accept="image/*" multiple capture="environment" onchange="handleFileSelect(event)" hidden />
+                </label>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openCameraStream()">📷 Take Photo with Camera</button>
+              </div>
+            </div>
+
+            <!-- Live WebRTC Camera Drawer -->
+            <div id="cameraModalBox" class="camera-box hidden">
+              <video id="cameraVideo" autoplay playsinline></video>
+              <canvas id="cameraCanvas" hidden></canvas>
+              <div class="camera-controls">
+                <button type="button" class="btn btn-primary btn-sm" onclick="captureCameraFrame()">Capture Photo</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="closeCameraStream()">Close Camera</button>
+              </div>
+            </div>
+
+            <div id="stagedImagesGrid" class="staged-images-grid"></div>
+          </div>
+
+          <div class="form-footer">
+            <button type="button" class="btn btn-outline" onclick="navigateTo('my-products')">Cancel</button>
+            <button type="submit" class="btn btn-primary">Publish Product to Marketplace</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 10: MY PRODUCTS (SELLER INVENTORY) ==================== -->
+    <section id="view-my-products" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">SELLER INVENTORY MANAGER</span>
+          <h2>My Product Listings</h2>
+          <p class="text-muted">Update stock quantities, edit details, or mark items as Sold / Unavailable.</p>
+        </div>
+        <button class="btn btn-primary" onclick="resetAndOpenAddProduct()">+ Add New Product</button>
+      </div>
+
+      <div id="myProductsContainer" class="table-card"></div>
+    </section>
+
+    <!-- ==================== PAGE 11: PURCHASE REQUESTS ==================== -->
+    <section id="view-purchase-requests" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">INCOMING & SENT PROPOSALS</span>
+          <h2>Purchase Requests</h2>
+          <p class="text-muted">Overview of all buyer purchase requests with requested quantities and proposed unit prices.</p>
+        </div>
+        <button class="btn btn-primary" onclick="navigateTo('negotiations')">Go to Active Negotiation Centre →</button>
+      </div>
+
+      <div id="purchaseRequestsTable" class="table-card"></div>
+    </section>
+
+    <!-- ==================== PAGE 12: NEGOTIATION CENTRE ==================== -->
+    <section id="view-negotiations" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">CORE PRICE DISCOVERY ENGINE</span>
+          <h2>Seller-Controlled Price Negotiation Centre</h2>
+          <p class="text-muted">
+            Buyers propose quantities and prices. Only the Seller can Accept, Reject, or issue a Counteroffer. Deals confirm only upon mutual agreement.
+          </p>
+        </div>
+        <div class="filter-pills">
+          <button class="pill-btn active" onclick="filterNegotiations('ALL', this)">All Deals</button>
+          <button class="pill-btn" onclick="filterNegotiations('PENDING', this)">Pending Seller Action</button>
+          <button class="pill-btn" onclick="filterNegotiations('COUNTERED', this)">Counteroffers Active</button>
+          <button class="pill-btn" onclick="filterNegotiations('ACCEPTED', this)">Confirmed Deals</button>
+        </div>
+      </div>
+
+      <div id="negotiationCardsList" class="neg-list"></div>
+    </section>
+
+    <!-- ==================== PAGE 13: MESSAGES (1-TO-1 PRIVATE CHAT) ==================== -->
+    <section id="view-messages" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">DIRECT COMMUNICATION</span>
+          <h2>Private Seller & Buyer Messenger</h2>
+          <p class="text-muted">One-to-one encrypted chat with automated negotiation history and deal alerts.</p>
+        </div>
+      </div>
+
+      <div class="messenger-grid">
+        <div class="messenger-sidebar" id="messengerThreads"></div>
+        <div class="messenger-main">
+          <div id="messengerHeader" class="messenger-header"></div>
+          <div id="messengerBody" class="messenger-body"></div>
+          <form class="messenger-input" onsubmit="sendChatMessage(event)">
+            <input type="text" id="chatMessageInput" placeholder="Type a message regarding quality, logistics, or pricing..." required />
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE 14: ORDERS AND TRANSACTIONS ==================== -->
+    <section id="view-orders" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">SETTLEMENT & FULFILMENT LEDGER</span>
+          <h2>Confirmed Orders & Transactions</h2>
+          <p class="text-muted">Complete history of mutually agreed deals, stock deductions, and printable commercial receipts.</p>
+        </div>
+      </div>
+
+      <div id="ordersLedgerContainer" class="table-card"></div>
+    </section>
+
+    <!-- ==================== PAGE 15: SELLER PROFILE ==================== -->
+    <section id="view-seller-profile" class="page-view">
+      <div id="sellerProfileContent"></div>
+    </section>
+
+    <!-- ==================== PAGE 16: ADMIN DASHBOARD ==================== -->
+    <section id="view-admin-dashboard" class="page-view">
+      <div class="page-header">
+        <div>
+          <span class="eyebrow">PLATFORM GOVERNANCE & ANALYTICS</span>
+          <h2>Enterprise Admin Dashboard</h2>
+          <p class="text-muted">Monitor multi-category liquidity, registered sellers, active negotiations, and stock compliance.</p>
+        </div>
+      </div>
+
+      <div id="adminKpiGrid" class="kpi-grid"></div>
+      <div class="split-2col">
+        <div class="panel-card">
+          <h3>Category Distribution</h3>
+          <div id="adminCategoryBreakdown"></div>
+        </div>
+        <div class="panel-card">
+          <h3>Recent Platform Audit Log</h3>
+          <div id="adminAuditLog"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL: QUICK PURCHASE REQUEST ==================== -->
+  <div id="purchaseModal" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-top">
+        <h3>Submit Purchase Request & Price Proposal</h3>
+        <button class="close-btn" onclick="closePurchaseModal()">✕</button>
+      </div>
+      <div id="purchaseModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ORDER RECEIPT VIEWER ==================== -->
+  <div id="receiptModal" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-top">
+        <h3>Official Deal Confirmation Receipt</h3>
+        <button class="close-btn" onclick="closeReceiptModal()">✕</button>
+      </div>
+      <div id="receiptModalContent"></div>
+    </div>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="enterprise-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="brand-name" style="color:#fff;margin-bottom:8px;">AgroConnect Enterprise</div>
+        <p class="footer-text">Empowering local producers, farmers, artisans, electronics innovators, and rural entrepreneurs across Northeast India and beyond.</p>
+      </div>
+      <div>
+        <h4>Marketplace Categories</h4>
+        <ul class="footer-links">
+          <li onclick="openCategoryPage('Agriculture & Farming')">Agriculture & Farming</li>
+          <li onclick="openCategoryPage('Bamboo, Cane & Wooden Products')">Bamboo, Cane & Wooden</li>
+          <li onclick="openCategoryPage('Handloom & Textiles')">Handloom & Textiles</li>
+          <li onclick="openCategoryPage('Electronics')">Electronics & Hardware</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Core Modules</h4>
+        <ul class="footer-links">
+          <li onclick="navigateTo('marketplace')">Explore Marketplace</li>
+          <li onclick="navigateTo('negotiations')">Price Negotiation Centre</li>
+          <li onclick="navigateTo('messages')">Direct Producer Chat</li>
+          <li onclick="navigateTo('orders')">Orders & Transactions</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Alert -->
+  <div id="toastBanner" class="toast-banner hidden"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
